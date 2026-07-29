@@ -363,6 +363,25 @@
           'Отправить без заметки'
         );
 
+        // В фоновой вкладке браузер не вызывает requestAnimationFrame вообще.
+        // Без страховки таймером клик по элементу за экраном подвисал навсегда,
+        // и прогон замирал молча.
+        const realRaf = window.requestAnimationFrame;
+        window.requestAnimationFrame = () => 0; // колбэк не вызовется никогда
+
+        const offscreen = document.createElement('button');
+        offscreen.innerHTML = '<span class="artdeco-button__text">Установить контакт</span>';
+        offscreen.style.cssText = 'position:absolute; top:99999px; left:0;';
+        document.body.append(offscreen);
+
+        const startedAt = Date.now();
+        await dom.humanClick(offscreen);
+        const elapsed = Date.now() - startedAt;
+
+        window.requestAnimationFrame = realRaf;
+        offscreen.remove();
+        check('клик не зависает, когда rAF не вызывается (фоновая вкладка)', elapsed < 3000, true);
+
         check(
           'адрес выдачи «Люди» собирается с запросом',
           self.LAC.peopleSearchUrl('recruiter OR frontend'),

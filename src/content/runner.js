@@ -31,12 +31,37 @@
     seen: 0,
     filtered: 0,
     sent: 0,
+    // Страницы подряд без свободных карточек — защита от холостого листания.
+    emptyPages: 0,
     // Месячный лимит персонализированных приглашений выбран: до конца прогона
     // даже не пытаемся заходить через «Персонализировать».
     noteBlocked: false,
   };
 
   const alive = () => state.running;
+
+  // Фоновую вкладку браузер обслуживает по остаточному принципу: не вызывает
+  // requestAnimationFrame, растягивает таймеры до секунды и больше, а LinkedIn
+  // в это время не дорисовывает выдачу. Прогон в фоне не ускорится — он просто
+  // пролистает страницы вхолостую, поэтому ждём возвращения на вкладку.
+  async function awaitVisible() {
+    if (!document.hidden) return true;
+
+    status('Вкладка в фоне — жду возврата');
+    hud.log('Пауза: вкладка ушла в фон', 'skip');
+    await dom.waitFor(() => !document.hidden || !alive(), 30 * 60 * 1000, 500);
+
+    if (!alive()) return false;
+    if (document.hidden) {
+      finish('Вкладка полчаса в фоне — остановился', 'warn');
+      return false;
+    }
+
+    hud.log('Вкладка снова активна — продолжаю', 'ok');
+    // Выдаче нужно время, чтобы дорисоваться после возврата из фона.
+    await sleep(randInt(1200, 2500));
+    return true;
+  }
 
   function status(message) {
     state.lastStatus = message;
@@ -139,8 +164,22 @@
 
     window.scrollTo({ top: 0 });
     state.scrollAttempts = 0;
-    // Ждём, пока карточки новой страницы реально появятся в DOM.
-    await dom.waitFor(() => dom.connectButtons().length > 0, 8000);
+
+    // Ждём, пока карточки новой страницы реально появятся в DOM. Если их нет —
+    // либо все контакты на странице уже приглашены, либо выдача не отрисовалась.
+    // Молча листать дальше нельзя: так прогон и проскакивал страницы пачками.
+    if (!(await dom.waitFor(() => dom.connectButtons().length > 0, 8000))) {
+      state.emptyPages += 1;
+      hud.log(`Страница без свободных карточек (${state.emptyPages})`, 'warn');
+      if (state.emptyPages >= 3) {
+        hud.log('Три страницы подряд пустые — дальше листать смысла нет', 'warn');
+        return false;
+      }
+      await sleep(randInt(1200, 2400));
+      return true;
+    }
+
+    state.emptyPages = 0;
     await sleep(randInt(1500, 3000));
     return true;
   }
@@ -395,6 +434,7 @@
   async function loop() {
     while (alive()) {
       if (!contextAlive()) return selfDestruct();
+      if (!(await awaitVisible())) return;
 
       const stats = await loadStats();
       hud.setStats(stats, state.settings);

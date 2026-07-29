@@ -266,8 +266,19 @@
   // Голого el.click() Ember-компонентам LinkedIn мало: многие кнопки реагируют на
   // pointerdown/mousedown, а не на итоговый click. Воспроизводим полную
   // последовательность событий, как у настоящего курсора.
+  // В фоновой вкладке requestAnimationFrame не вызывается вообще, поэтому ждать
+  // только кадр нельзя — без страховки таймером клик подвисал бы навсегда.
   const nextFrame = () =>
-    new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    new Promise((resolve) => {
+      let settled = false;
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        resolve();
+      };
+      requestAnimationFrame(() => requestAnimationFrame(finish));
+      setTimeout(finish, 120);
+    });
 
   async function humanClick(el) {
     let rect = el.getBoundingClientRect();
