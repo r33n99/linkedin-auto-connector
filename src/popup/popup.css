@@ -1,0 +1,397 @@
+:root {
+  --bg: #ffffff;
+  --fg: #1d2226;
+  --muted: #6b7783;
+  --line: rgba(0, 0, 0, 0.1);
+  --surface: #f4f7fa;
+  --accent: #0a66c2;
+  --accent-hover: #084c93;
+  --danger: #c0392b;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1b1f23;
+    --fg: #e6e9ec;
+    --muted: #8b96a1;
+    --line: rgba(255, 255, 255, 0.12);
+    --surface: #262b30;
+    --accent: #70b5f9;
+    --accent-hover: #8ec5fb;
+    --danger: #ff8a80;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  width: 336px;
+  margin: 0;
+  padding: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--fg);
+  background: var(--bg);
+}
+
+/* --- Шапка --- */
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.head-text {
+  flex: 1;
+  min-width: 0;
+}
+
+h1 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: 0.2px;
+}
+
+.page-state {
+  margin: 2px 0 0;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.page-state.ready {
+  color: #2f9e44;
+}
+
+.page-state.warn {
+  color: var(--danger);
+}
+
+.saved {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #2f9e44;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.saved.show {
+  opacity: 1;
+}
+
+/* --- Счётчики --- */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.stat {
+  background: var(--surface);
+  border-radius: 9px;
+  padding: 8px 10px;
+}
+
+.stat-label {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--muted);
+}
+
+.stat-value {
+  font-size: 15px;
+  font-weight: 650;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-value.maxed {
+  color: var(--danger);
+}
+
+/* --- Поиск --- */
+
+.search {
+  padding: 10px 12px 12px;
+  margin-bottom: 10px;
+  background: var(--surface);
+  border-radius: 10px;
+}
+
+.search .field > span {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+}
+
+.search .btn {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.search .hint {
+  margin-top: 7px;
+}
+
+.search code {
+  padding: 0 3px;
+  font-size: 11px;
+  background: var(--bg);
+  border-radius: 3px;
+}
+
+input[type='text'] {
+  width: 100%;
+  padding: 7px 9px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+}
+
+input[type='text']:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+  border-color: transparent;
+}
+
+/* --- Кнопки --- */
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.btn {
+  flex: 1;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, opacity 0.15s ease;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+@media (prefers-color-scheme: dark) {
+  .btn-primary {
+    color: #0d1216;
+  }
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--accent);
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: rgba(10, 102, 194, 0.09);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* «Стоп» уже пары — основное действие в этом ряду всё-таки «Старт». */
+#stop {
+  flex: 0 0 92px;
+}
+
+/* --- Форма --- */
+
+.form {
+  display: grid;
+  gap: 12px;
+}
+
+.group {
+  margin: 0;
+  padding: 10px 12px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+legend {
+  padding: 0 5px;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--muted);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 0;
+}
+
+.row > span:first-child {
+  color: var(--fg);
+}
+
+.range {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.range em {
+  color: var(--muted);
+  font-style: normal;
+}
+
+input[type='number'] {
+  width: 64px;
+  padding: 5px 7px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.range input[type='number'] {
+  width: 54px;
+}
+
+input[type='number']:focus,
+textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+  border-color: transparent;
+}
+
+input.invalid {
+  border-color: var(--danger);
+}
+
+.field {
+  display: block;
+  padding: 4px 0;
+}
+
+.field > span {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+textarea {
+  width: 100%;
+  padding: 7px 8px;
+  font-family: inherit;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  resize: vertical;
+}
+
+.hint {
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.hint code {
+  padding: 0 3px;
+  background: var(--surface);
+  border-radius: 3px;
+}
+
+.count {
+  float: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.count.maxed {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+select {
+  padding: 5px 7px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+}
+
+textarea:disabled {
+  cursor: not-allowed;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.check input {
+  accent-color: var(--accent);
+  width: 15px;
+  height: 15px;
+}
+
+/* --- Подвал --- */
+
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.foot-note {
+  font-size: 11px;
+  color: var(--muted);
+}

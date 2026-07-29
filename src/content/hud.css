@@ -1,0 +1,236 @@
+/* Панель управления поверх LinkedIn.
+   Все селекторы с префиксом lac- и повышенной специфичностью: у LinkedIn
+   агрессивные глобальные стили для button/ul/li, их нужно перебивать. */
+
+.lac-panel {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 2147483000;
+  width: 296px;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #1d2226;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  user-select: none;
+}
+
+.lac-panel * {
+  box-sizing: border-box;
+}
+
+.lac-panel.lac-collapsed .lac-body {
+  display: none;
+}
+
+/* --- Шапка --- */
+
+.lac-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: linear-gradient(135deg, #0a66c2, #084c93);
+  color: #fff;
+  cursor: move;
+}
+
+.lac-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #b9c6d2;
+  flex: none;
+}
+
+.lac-panel[data-state='running'] .lac-dot {
+  background: #4ade80;
+  box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+  animation: lac-pulse 1.6s infinite;
+}
+
+.lac-panel[data-state='error'] .lac-dot {
+  background: #f87171;
+}
+
+@keyframes lac-pulse {
+  70% { box-shadow: 0 0 0 7px rgba(74, 222, 128, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+}
+
+.lac-title {
+  flex: 1;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lac-collapse {
+  all: unset;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 14px;
+  line-height: 1;
+  opacity: 0.85;
+}
+
+.lac-collapse:hover {
+  background: rgba(255, 255, 255, 0.18);
+  opacity: 1;
+}
+
+/* --- Тело --- */
+
+.lac-body {
+  padding: 12px;
+}
+
+.lac-status {
+  margin: 0 0 10px;
+  font-size: 12.5px;
+  color: #495057;
+  min-height: 18px;
+}
+
+.lac-meters {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.lac-meter {
+  background: #f2f6fa;
+  border-radius: 8px;
+  padding: 7px 9px;
+}
+
+.lac-meter-label {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #6b7783;
+}
+
+.lac-meter-value {
+  font-size: 15px;
+  font-weight: 650;
+  color: #0a66c2;
+  font-variant-numeric: tabular-nums;
+}
+
+.lac-meter-value.lac-maxed {
+  color: #c0392b;
+}
+
+.lac-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.lac-btn {
+  all: unset;
+  flex: 1;
+  text-align: center;
+  padding: 8px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, opacity 0.15s ease;
+}
+
+.lac-btn-primary {
+  background: #0a66c2;
+  color: #fff;
+}
+
+.lac-btn-primary:hover {
+  background: #084c93;
+}
+
+.lac-btn-ghost {
+  background: transparent;
+  color: #0a66c2;
+  box-shadow: inset 0 0 0 1.5px #0a66c2;
+}
+
+.lac-btn-ghost:hover {
+  background: rgba(10, 102, 194, 0.08);
+}
+
+.lac-btn[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.lac-log {
+  margin: 0;
+  padding: 8px;
+  list-style: none;
+  max-height: 150px;
+  overflow-y: auto;
+  background: #f7f9fb;
+  border-radius: 8px;
+  font-size: 11.5px;
+  color: #495057;
+}
+
+.lac-log li {
+  display: flex;
+  gap: 6px;
+  padding: 2px 0;
+  list-style: none;
+  word-break: break-word;
+}
+
+.lac-log li::before {
+  content: '•';
+  color: #a9b6c2;
+  flex: none;
+}
+
+.lac-log li.lac-ok::before { content: '✓'; color: #2f9e44; }
+.lac-log li.lac-skip::before { content: '–'; color: #adb5bd; }
+.lac-log li.lac-warn::before { content: '!'; color: #e8590c; }
+
+.lac-hint {
+  margin: 8px 0 0;
+  font-size: 11px;
+  color: #8794a1;
+}
+
+/* --- Тёмная тема --- */
+
+@media (prefers-color-scheme: dark) {
+  .lac-panel {
+    color: #e6e9ec;
+    background: #1b1f23;
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+  .lac-status { color: #aab4bd; }
+  .lac-meter { background: #262b30; }
+  .lac-meter-label { color: #8b96a1; }
+  .lac-meter-value { color: #70b5f9; }
+  .lac-meter-value.lac-maxed { color: #ff8a80; }
+  .lac-btn-primary { background: #2977c9; }
+  .lac-btn-primary:hover { background: #3b8ade; }
+  .lac-btn-ghost { color: #70b5f9; box-shadow: inset 0 0 0 1.5px #70b5f9; }
+  .lac-log { background: #22272b; color: #aab4bd; }
+  .lac-hint { color: #77828d; }
+}

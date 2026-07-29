@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <title>Auto Connector — самопроверка детекта</title>
+    <style>
+      body { font: 13px/1.5 -apple-system, 'Segoe UI', Roboto, sans-serif; padding: 16px; }
+      h1 { font-size: 15px; }
+      .results { margin-bottom: 20px; }
+      .case { padding: 3px 0; }
+      .pass::before { content: 'PASS '; color: #2f9e44; font-weight: 700; }
+      .fail::before { content: 'FAIL '; color: #c0392b; font-weight: 700; }
+      .total { margin-top: 8px; font-weight: 700; }
+      .fixture { opacity: 0.55; border-top: 1px solid #ddd; padding-top: 10px; }
+      .fixture li { list-style: none; margin-bottom: 8px; }
+    </style>
+  </head>
+  <body>
+    <h1>Самопроверка детекта кнопок</h1>
+    <p>Фикстуры ниже повторяют разметку выдачи LinkedIn, включая кнопку со скрытым
+      дублем подписи — на ней ломался прежний детект с якорями <code>^…$</code>.</p>
+    <div id="results" class="results">Гружу скрипты…</div>
+
+    <ul id="fixture" class="fixture">
+      <li>
+        <a href="https://www.linkedin.com/in/andrey-sokolov"><span aria-hidden="true">Andrey Sokolov</span></a>
+        <div class="entity-result__primary-subtitle">Product Manager</div>
+        <div>Кыргызстан</div>
+        <button type="button" aria-label="Пригласить: Andrey Sokolov, установить контакт">
+          <svg width="16" height="16"></svg><span>Установить контакт</span>
+        </button>
+      </li>
+      <li>
+        <a href="https://www.linkedin.com/in/viktoria-orlova?trk=search"><span aria-hidden="true">Виктория Орлова</span></a>
+        <div class="entity-result__primary-subtitle">Head of Talent Acquisition | Bereke Bank</div>
+        <div>Алматы, Казахстан</div>
+        <button type="button" aria-label="Пригласить: Виктория Орлова, установить контакт">
+          <span>Установить контакт</span><span class="visually-hidden">Установить контакт с Виктория Орлова</span>
+        </button>
+      </li>
+      <li>
+        <a href="https://www.linkedin.com/in/irina-volkova"><span aria-hidden="true">Ирина Волкова</span></a>
+        <div class="entity-result__primary-subtitle">Technical recruiter. Looking for a ML engineer/ BizDev manager</div>
+        <div>Москва</div>
+        <button type="button" aria-label="Пригласить: Ирина Волкова, установить контакт">Установить контакт</button>
+      </li>
+      <li>
+        <a href="https://www.linkedin.com/in/aleksandr-titov"><span aria-hidden="true">Aleksandr Titov</span></a>
+        <div class="entity-result__primary-subtitle">Senior .NET / C# Engineer | FinTech</div>
+        <div>город Бишкек, Кыргызстан</div>
+        <button type="button" aria-label="Отправить сообщение Aleksandr Titov"><span>Отправить сообщение</span></button>
+      </li>
+      <li>
+        <a href="https://www.linkedin.com/in/pending-person"><span aria-hidden="true">Уже Приглашённый</span></a>
+        <div class="entity-result__primary-subtitle">Recruiter</div>
+        <button type="button" disabled><span>В ожидании</span></button>
+      </li>
+      <li>
+        <a href="https://www.linkedin.com/in/follow-only"><span aria-hidden="true">Только Подписка</span></a>
+        <div class="entity-result__primary-subtitle">Recruiter, Influencer</div>
+        <button type="button" aria-label="Подписаться на Только Подписка"><span>Подписаться</span></button>
+      </li>
+      <li>
+        <a href="https://www.linkedin.com/in/english-ui"><span aria-hidden="true">English Interface</span></a>
+        <div class="entity-result__primary-subtitle">Technical Recruiter at Acme</div>
+        <button type="button" aria-label="Invite English Interface to connect"><span>Connect</span></button>
+      </li>
+      <li style="content-visibility: auto">
+        <a href="https://www.linkedin.com/in/offscreen"><span aria-hidden="true">За Экраном</span></a>
+        <div class="entity-result__primary-subtitle">Recruiter</div>
+        <button type="button" aria-label="Пригласить: За Экраном, установить контакт"><span>Установить контакт</span></button>
+      </li>
+      <li>
+        <a href="https://www.linkedin.com/in/hidden"><span aria-hidden="true">Скрытый Шаблон</span></a>
+        <div class="entity-result__primary-subtitle">Recruiter</div>
+        <button type="button" style="display: none" aria-label="Пригласить: Скрытый Шаблон, установить контакт">Установить контакт</button>
+      </li>
+    </ul>
+
+    <!-- Разметка без <li>: результаты — вложенные div'ы, внутри карточки есть
+         ссылки на профили общих контактов. Именно на такой вёрстке подъём к
+         карточке по closest('li') схлопывал все кнопки в одну «карточку». -->
+    <div id="fixture-divs" class="fixture">
+      <div>
+        <div>
+          <div>
+            <a href="https://www.linkedin.com/in/eldana-osmonova"><span aria-hidden="true">Eldana Osmonova</span></a>
+            <div class="entity-result__primary-subtitle">Frontend developer | React | JavaScript</div>
+            <div>Бишкек, Кыргызстан</div>
+            <div>
+              <a href="https://www.linkedin.com/in/timur-ismailov">Timur Ismailov</a>,
+              <a href="https://www.linkedin.com/in/marina-belova">Marina Belova</a> и еще 40 общих контактов
+            </div>
+          </div>
+          <div><button type="button" aria-label="Пригласить: Eldana Osmonova, установить контакт"><span>Установить контакт</span></button></div>
+        </div>
+        <div>
+          <div>
+            <a href="https://www.linkedin.com/in/sergey-kovalev"><span aria-hidden="true">Сергей Ковалёв</span></a>
+            <div class="entity-result__primary-subtitle">Software Development Department at Nur Telecom LLC</div>
+            <div>город Бишкек, Кыргызстан</div>
+            <div><a href="https://www.linkedin.com/in/almaz-raiymov">Алмаз Райымов</a> и еще 37 общих контактов</div>
+          </div>
+          <div><button type="button" aria-label="Пригласить: Сергей Ковалёв, установить контакт"><span>Установить контакт</span></button></div>
+        </div>
+        <div>
+          <div>
+            <a href="https://www.linkedin.com/in/aigerim"><span aria-hidden="true">Aigerim Nurlan Kyzy</span></a>
+            <div class="entity-result__primary-subtitle">MsStudent</div>
+          </div>
+          <div><button type="button"><span>На рассмотрении</span></button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Модалка «Добавить заметку в приглашение?» — на её кнопке расширение
+         вставало: подпись «Отправить без заметки» не совпадала ни с одной
+         регуляркой, а фолбэк требовал точного «Отправить». -->
+    <!-- Разметка снята с живого LinkedIn один в один: крестик подписан
+         «Пропустить», у модалки нет aria-modal, текст кнопок лежит во
+         вложенном span.artdeco-button__text. -->
+    <div id="fixture-modal" class="fixture">
+      <div data-test-modal="" role="dialog" tabindex="-1"
+           class="artdeco-modal artdeco-modal--layer-default send-invite" size="medium"
+           aria-labelledby="send-invite-modal">
+        <span class="a11y-text">Контент диалогового окна – начало.</span>
+        <button aria-label="Пропустить" id="ember46"
+                class="artdeco-button artdeco-button--circle artdeco-button--muted artdeco-button--2 artdeco-button--tertiary ember-view artdeco-modal__dismiss"
+                data-test-modal-close-btn=""><svg role="none" aria-hidden="true" class="artdeco-button__icon" width="24" height="24"></svg><span class="artdeco-button__text"></span></button>
+        <div id="ember47" class="artdeco-modal__header ember-view">
+          <h2 id="send-invite-modal">Добавить заметку в приглашение?</h2>
+        </div>
+        <div id="ember48" class="artdeco-modal__content ember-view">
+          <p class="display-flex"><span class="flex-1">Персонализируйте свое приглашение участнику
+            <strong>Ilias Karimov</strong>, добавив в него заметку.</span></p>
+        </div>
+        <div id="ember49" class="artdeco-modal__actionbar ember-view text-align-right">
+          <button aria-label="Персонализировать" id="ember50"
+                  class="artdeco-button artdeco-button--2 artdeco-button--secondary ember-view mr1"><span class="artdeco-button__text">Персонализировать</span></button>
+          <button aria-label="Отправить без заметки" id="ember51"
+                  class="artdeco-button artdeco-button--2 artdeco-button--primary ember-view ml1"><span class="artdeco-button__text">Отправить без заметки</span></button>
+        </div>
+        <span class="a11y-text">Контент диалогового окна – окончание.</span>
+      </div>
+    </div>
+
+    <script>
+      (async () => {
+        // ?v= — чтобы браузер не подсовывал закешированную версию скрипта после правок.
+        const load = async (path) => (0, eval)(await (await fetch(`${path}?v=${Date.now()}`)).text());
+        await load('../src/shared/settings.js');
+        await load('../src/content/dom.js');
+
+        const { dom } = self.LAC;
+        const out = document.getElementById('results');
+        out.textContent = '';
+        let failed = 0;
+
+        const check = (name, actual, expected) => {
+          const ok = JSON.stringify(actual) === JSON.stringify(expected);
+          if (!ok) failed++;
+          const row = document.createElement('div');
+          row.className = `case ${ok ? 'pass' : 'fail'}`;
+          row.textContent = ok ? name : `${name} — получили ${JSON.stringify(actual)}, ждали ${JSON.stringify(expected)}`;
+          out.append(row);
+        };
+
+        const root = document.getElementById('fixture');
+        const buttons = dom.connectButtons(root);
+        const names = buttons.map((b) => dom.personName(dom.cardOf(b)));
+
+        check('находит только кнопки приглашения', names, [
+          'Andrey Sokolov',
+          'Виктория Орлова',
+          'Ирина Волкова',
+          'English Interface',
+          'За Экраном',
+        ]);
+
+        const card = (i) => dom.cardOf(buttons[i]);
+        check('имя из карточки', dom.personName(card(0)), 'Andrey Sokolov');
+        check('должность из карточки', dom.headline(card(0)), 'Product Manager');
+        check('url профиля без query', dom.profileUrl(card(1)), 'https://www.linkedin.com/in/viktoria-orlova');
+
+        const withRecruiter = { includeKeywords: ['recruiter'], excludeKeywords: [] };
+        check(
+          'фильтр recruiter пропускает продакта',
+          dom.matchesFilters(card(0), withRecruiter).ok,
+          false
+        );
+        check(
+          'фильтр recruiter ловит рекрутера',
+          dom.matchesFilters(card(2), withRecruiter).ok,
+          true
+        );
+        check(
+          'фильтр регистронезависим (Technical Recruiter)',
+          dom.matchesFilters(card(3), withRecruiter).ok,
+          true
+        );
+        check(
+          'пустой include берёт всех',
+          dom.matchesFilters(card(0), { includeKeywords: [], excludeKeywords: [] }).ok,
+          true
+        );
+        check(
+          'стоп-слово перевешивает',
+          dom.matchesFilters(card(2), { includeKeywords: ['recruiter'], excludeKeywords: ['ml engineer'] }).ok,
+          false
+        );
+        check(
+          'имя не участвует в фильтре',
+          dom.matchesFilters(card(1), { includeKeywords: ['орлова'], excludeKeywords: [] }).ok,
+          false
+        );
+
+        // Вёрстка без <li>: каждая кнопка обязана дать свою карточку и свой id,
+        // иначе все результаты схлопываются в один и обрабатывается ровно один.
+        const divRoot = document.getElementById('fixture-divs');
+        const divButtons = dom.connectButtons(divRoot);
+        check(
+          'div-вёрстка: имена по кнопкам',
+          divButtons.map((b) => dom.personName(dom.cardOf(b))),
+          ['Eldana Osmonova', 'Сергей Ковалёв']
+        );
+        check(
+          'div-вёрстка: у каждой кнопки свой профиль',
+          divButtons.map((b) => dom.profileUrl(dom.cardOf(b))),
+          ['https://www.linkedin.com/in/eldana-osmonova', 'https://www.linkedin.com/in/sergey-kovalev']
+        );
+        check(
+          'div-вёрстка: карточка не захватывает соседей',
+          dom.cardOf(divButtons[0]).querySelectorAll('button').length,
+          1
+        );
+        check(
+          'div-вёрстка: должность своя, не соседская',
+          dom.headline(dom.cardOf(divButtons[1])),
+          'Software Development Department at Nur Telecom LLC'
+        );
+        check(
+          'общие контакты не мешают фильтру',
+          dom.matchesFilters(dom.cardOf(divButtons[0]), { includeKeywords: ['frontend'], excludeKeywords: [] }).ok,
+          true
+        );
+
+        // Модалка приглашения: жмём «без заметки», а не «Персонализировать».
+        const modal = document.querySelector('#fixture-modal .artdeco-modal');
+        const pickSend = dom.buttonIn(modal, dom.RE.sendWithoutNote) || dom.buttonIn(modal, dom.RE.send);
+        check('модалка: выбираем «Отправить без заметки»', dom.text(pickSend), 'Отправить без заметки');
+        check(
+          'модалка: «Персонализировать» не выбирается',
+          dom.text(dom.buttonIn(modal, dom.RE.sendWithoutNote)) === 'Персонализировать',
+          false
+        );
+        check(
+          'модалка: крестик «Пропустить» находится',
+          dom.norm(
+            modal
+              .querySelector('[data-test-modal-close-btn], .artdeco-modal__dismiss')
+              ?.getAttribute('aria-label')
+          ),
+          'Пропустить'
+        );
+        check('модалка: опознаётся без aria-modal', dom.modalScore(modal) >= 3, true);
+
+        // Варианты подписи из других сборок LinkedIn — все должны отработать.
+        for (const caption of ['Отправить без записки', 'Отправить без сообщения', 'Send without a note']) {
+          const box = document.createElement('div');
+          box.setAttribute('role', 'dialog');
+          box.innerHTML = `<button type="button">Персонализировать</button><button type="button">${caption}</button>`;
+          document.body.append(box);
+          check(`модалка: «${caption}»`, dom.text(dom.buttonIn(box, dom.RE.sendWithoutNote)), caption);
+          box.remove();
+        }
+
+        // Оверлей «Сообщения» тоже role="dialog" и лежит в DOM раньше модалки
+        // приглашения — раньше расширение искало кнопку отправки именно в нём.
+        const messenger = document.createElement('div');
+        messenger.setAttribute('role', 'dialog');
+        messenger.innerHTML =
+          '<h2>Сообщения</h2><textarea></textarea><button type="button">Отправить</button>';
+        document.body.prepend(messenger);
+
+        check(
+          'мессенджер не принимается за модалку приглашения',
+          dom.openModal() === document.querySelector('#fixture-modal .artdeco-modal'),
+          true
+        );
+        check('счёт мессенджера ниже порога', dom.modalScore(messenger) < 3, true);
+
+        messenger.remove();
+        check(
+          'без модалки приглашения возвращается null',
+          (() => {
+            const modalBox = document.getElementById('fixture-modal');
+            modalBox.remove();
+            document.body.prepend(messenger);
+            const result = dom.openModal();
+            messenger.remove();
+            document.body.append(modalBox);
+            return result;
+          })(),
+          null
+        );
+
+        // Ember-кнопки LinkedIn слушают события делегированно на document и часто
+        // реагируют на mousedown, а не на итоговый click.
+        // Жмём ровно ту кнопку из живой вёрстки, что прислана в дампе.
+        const emberBtn = document.getElementById('ember51');
+
+        // Приводим кнопку в видимую область и ждём, пока хит-тест догонит
+        // геометрию: проверяем здесь именно попадание в цель, а не гонку
+        // прокрутки с отрисовкой (её отрабатывает цикл ожидания в humanClick).
+        emberBtn.scrollIntoView({ block: 'center' });
+        for (let frame = 0; frame < 20; frame += 1) {
+          await new Promise((r) => requestAnimationFrame(r));
+          const box = emberBtn.getBoundingClientRect();
+          const probe = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+          if (probe && emberBtn.contains(probe)) break;
+        }
+
+        const seen = [];
+        const targets = [];
+        const details = {};
+        const buttonsMask = {};
+        const types = ['pointerdown', 'mousedown', 'mouseup', 'click'];
+        const spy = (e) => {
+          // Слушаем на document: события всплывают со span'а внутри кнопки.
+          if (!emberBtn.contains(e.target)) return;
+          seen.push(e.type);
+          targets.push(e.target.tagName);
+          details[e.type] = e.detail;
+          buttonsMask[e.type] = e.buttons;
+        };
+        types.forEach((t) => document.addEventListener(t, spy));
+        await dom.humanClick(emberBtn);
+        types.forEach((t) => document.removeEventListener(t, spy));
+
+        check('humanClick: события доходят делегированно до document', seen, types);
+        check(
+          'humanClick: целью становится внутренний span, как у живого курсора',
+          targets.every((t) => t === 'SPAN'),
+          true
+        );
+        // Ради этого всё и затевалось: detail 0 выдаёт программный клик.
+        check('humanClick: click несёт detail 1, а не 0', details.click, 1);
+        check('humanClick: mousedown несёт detail 1', details.mousedown, 1);
+        check('humanClick: на нажатии buttons = 1', buttonsMask.mousedown, 1);
+        check('humanClick: на отпускании buttons = 0', buttonsMask.mouseup, 0);
+
+        const keys = [];
+        const keySpy = (e) => {
+          if (e.target === emberBtn) keys.push(`${e.type}:${e.key}`);
+        };
+        ['keydown', 'keyup'].forEach((t) => document.addEventListener(t, keySpy));
+        dom.keyActivate(emberBtn);
+        ['keydown', 'keyup'].forEach((t) => document.removeEventListener(t, keySpy));
+        check('keyActivate: запасной путь через Enter', keys, ['keydown:Enter', 'keyup:Enter']);
+        check(
+          'кнопка из реальной вёрстки распознаётся',
+          dom.text(dom.buttonIn(emberBtn.parentElement, dom.RE.sendWithoutNote)),
+          'Отправить без заметки'
+        );
+
+        check(
+          'адрес выдачи «Люди» собирается с запросом',
+          self.LAC.peopleSearchUrl('recruiter OR frontend'),
+          'https://www.linkedin.com/search/results/people/?keywords=recruiter%20OR%20frontend&origin=GLOBAL_SEARCH_HEADER'
+        );
+
+        // Та же модалка, но внутри открытого shadow-root: обычный querySelectorAll
+        // туда не заглядывает, и расширение «не видит» открытое на экране окно.
+        const host = document.createElement('div');
+        document.body.append(host);
+        const shadow = host.attachShadow({ mode: 'open' });
+        shadow.innerHTML = `
+          <div data-test-modal="" role="dialog" class="artdeco-modal send-invite">
+            <button aria-label="Пропустить" class="artdeco-button artdeco-modal__dismiss"
+                    data-test-modal-close-btn=""><span class="artdeco-button__text"></span></button>
+            <h2>Добавить заметку в приглашение?</h2>
+            <button aria-label="Персонализировать" class="artdeco-button"><span class="artdeco-button__text">Персонализировать</span></button>
+            <button aria-label="Отправить без заметки" class="artdeco-button"><span class="artdeco-button__text">Отправить без заметки</span></button>
+          </div>`;
+        document.getElementById('fixture-modal').remove();
+
+        const shadowModal = dom.openModal();
+        check('shadow DOM: модалка находится', Boolean(shadowModal), true);
+        check(
+          'shadow DOM: кнопка отправки находится',
+          shadowModal ? dom.text(dom.buttonIn(shadowModal, dom.RE.sendWithoutNote)) : null,
+          'Отправить без заметки'
+        );
+        check(
+          'shadow DOM: крестик находится',
+          Boolean(shadowModal?.querySelector('[data-test-modal-close-btn], .artdeco-modal__dismiss')),
+          true
+        );
+        check('whereIs: видит кнопку в теневом дереве', dom.whereIs(dom.RE.sendWithoutNote).вShadowDOM, 1);
+        host.remove();
+
+        // --- Записка к приглашению ---
+        const { renderNote, NOTE_MAX } = self.LAC;
+        const person = { name: 'Zulaika Moldomuratova', headline: 'IT Recruiter | Quantitative Research' };
+
+        check(
+          'записка: подставляется имя',
+          renderNote('Здравствуйте, {{firstName}}! Буду рад контакту.', person),
+          'Здравствуйте, Zulaika! Буду рад контакту.'
+        );
+        check(
+          'записка: полное имя и должность',
+          renderNote('{{name}} — {{headline}}', person),
+          'Zulaika Moldomuratova — IT Recruiter | Quantitative Research'
+        );
+        check('записка: пробелы в плейсхолдере не мешают', renderNote('Привет, {{ firstName }}!', person), 'Привет, Zulaika!');
+        check('записка: регистр плейсхолдера не важен', renderNote('Привет, {{FirstName}}!', person), 'Привет, Zulaika!');
+        check(
+          'записка: неизвестный плейсхолдер вычищается, а не уходит человеку',
+          renderNote('Привет, {{firstName}} из {{company}}!', person),
+          'Привет, Zulaika из !'
+        );
+        check('записка: обрезается по лимиту LinkedIn', renderNote('я'.repeat(400), person).length, NOTE_MAX);
+        check('записка: пустой шаблон даёт пустую строку', renderNote('', person), '');
+        check('записка: без имени не падает', renderNote('Привет, {{firstName}}!', {}), 'Привет, !');
+
+        // Модалка второго шага: поле ввода и кнопка «Отправить».
+        const noteModal = document.createElement('div');
+        noteModal.setAttribute('role', 'dialog');
+        noteModal.className = 'artdeco-modal send-invite';
+        noteModal.innerHTML = `
+          <h2>Добавить заметку в приглашение?</h2>
+          <textarea name="message" id="custom-message" placeholder="Ваша заметка"></textarea>
+          <button aria-label="Отправить" class="artdeco-button"><span class="artdeco-button__text">Отправить</span></button>`;
+        document.body.append(noteModal);
+
+        const field = dom.noteField(noteModal);
+        check('поле записки находится', Boolean(field), true);
+        const written = dom.setFieldValue(field, 'Привет, Zulaika!');
+        check('текст записки записывается в поле', written && field.value, 'Привет, Zulaika!');
+        check(
+          'в модалке записки жмётся «Отправить»',
+          dom.text(dom.buttonIn(noteModal, dom.RE.send)),
+          'Отправить'
+        );
+        check(
+          'кнопка «Персонализировать» опознаётся',
+          dom.RE.personalize.test('Персонализировать') && dom.RE.personalize.test('Add a note'),
+          true
+        );
+        noteModal.remove();
+
+        // Лимит записок выбран: LinkedIn не даёт «Персонализировать». Это и есть
+        // сигнал переключиться на обычные приглашения, а не долбиться в окно.
+        const noPersonalize = document.createElement('div');
+        noPersonalize.setAttribute('role', 'dialog');
+        noPersonalize.className = 'artdeco-modal send-invite';
+        noPersonalize.innerHTML = `
+          <h2>Добавить заметку в приглашение?</h2>
+          <button aria-label="Отправить без заметки" class="artdeco-button"><span class="artdeco-button__text">Отправить без заметки</span></button>`;
+        document.body.append(noPersonalize);
+        check(
+          'без «Персонализировать» путь с запиской отпадает',
+          dom.buttonIn(noPersonalize, dom.RE.personalize),
+          undefined
+        );
+        check(
+          'при этом обычная отправка остаётся доступной',
+          dom.text(dom.buttonIn(noPersonalize, dom.RE.sendWithoutNote)),
+          'Отправить без заметки'
+        );
+        noPersonalize.remove();
+
+        // Premium-заглушка вместо поля записки — её текст снят с живого LinkedIn.
+        const upsell =
+          'Отправляйте неограниченное количество персонализированных приглашений с помощью Premium. ' +
+          'У вас закончились бесплатные персонализированные сообщения. Обойдите это ограничение с помощью Premium.';
+        check('лимит записок: Premium-заглушка распознаётся', dom.RE.noteLimit.test(upsell), true);
+        check(
+          'лимит записок: обычная модалка не принимается за заглушку',
+          dom.RE.noteLimit.test(
+            'Добавить заметку в приглашение? Персонализируйте свое приглашение участнику Ilias Karimov, добавив в него заметку.'
+          ),
+          false
+        );
+        check(
+          'лимит записок: английский вариант',
+          dom.RE.noteLimit.test('Your free personalized invitations have run out. Upgrade to Premium.'),
+          true
+        );
+
+        // Заблокированная кнопка отправки не должна считаться пригодной.
+        const disabledSend = document.createElement('div');
+        disabledSend.setAttribute('role', 'dialog');
+        disabledSend.className = 'artdeco-modal';
+        disabledSend.innerHTML = `
+          <textarea id="custom-message"></textarea>
+          <button disabled class="artdeco-button"><span class="artdeco-button__text">Отправить</span></button>`;
+        document.body.append(disabledSend);
+        check('disabled-кнопка отправки не выбирается', dom.buttonIn(disabledSend, dom.RE.send), undefined);
+        disabledSend.remove();
+
+        // --- Пагинация ---
+        const pager = document.createElement('div');
+        pager.className = 'artdeco-pagination';
+        pager.innerHTML = `
+          <button aria-current="true" class="selected"><span>1</span></button>
+          <button><span>2</span></button>
+          <button><span>3</span></button>
+          <button class="next-btn"><span>Далее ›</span></button>`;
+        document.body.append(pager);
+
+        check('пагинация: текущая страница определяется', dom.currentPageNumber(), 1);
+        check('пагинация: находится кнопка «Далее ›»', dom.text(dom.nextPageButton()), 'Далее ›');
+
+        // Карусель с «Next» не должна перебивать блок пагинации.
+        const carousel = document.createElement('div');
+        carousel.className = 'promo-carousel';
+        carousel.innerHTML = '<button aria-label="Next"><span>Next</span></button>';
+        document.body.prepend(carousel);
+        check('пагинация: «Next» из карусели не перехватывает', dom.text(dom.nextPageButton()), 'Далее ›');
+        carousel.remove();
+
+        // Подписи нет — переходим по номеру страницы.
+        pager.querySelector('.next-btn').remove();
+        check('пагинация: запасной путь по номерам страниц', dom.text(dom.nextPageButton()), '2');
+
+        // Последняя страница: следующего номера нет.
+        pager.innerHTML = '<button aria-current="true" class="selected"><span>3</span></button>';
+        check('пагинация: на последней странице кнопки нет', dom.nextPageButton(), null);
+        pager.remove();
+
+        check('пагинация: английская подпись', dom.RE.nextPage.test('Next'), true);
+        check('пагинация: «Следующая страница»', dom.RE.nextPage.test('Следующая страница'), true);
+        check('пагинация: «Назад» не считается', dom.RE.nextPage.test('Назад'), false);
+
+        const total = document.createElement('div');
+        total.className = 'total';
+        total.textContent = failed ? `Провалено проверок: ${failed}` : 'Все проверки пройдены';
+        out.append(total);
+      })();
+    </script>
+  </body>
+</html>

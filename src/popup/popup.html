@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <title>LinkedIn Auto Connector</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header class="head">
+      <div class="head-text">
+        <h1>Auto Connector</h1>
+        <p id="page-state" class="page-state">Проверяю вкладку…</p>
+      </div>
+      <span id="saved" class="saved">сохранено</span>
+    </header>
+
+    <section class="stats">
+      <div class="stat">
+        <span class="stat-label">Сегодня</span>
+        <strong id="stat-day" class="stat-value">0 / 0</strong>
+      </div>
+      <div class="stat">
+        <span class="stat-label">За неделю</span>
+        <strong id="stat-week" class="stat-value">0 / 0</strong>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Всего</span>
+        <strong id="stat-total" class="stat-value">0</strong>
+      </div>
+    </section>
+
+    <div class="search">
+      <label class="field">
+        <span>Кого искать</span>
+        <input id="searchQuery" type="text" placeholder="recruiter OR frontend OR backend" />
+      </label>
+      <button id="searchStart" class="btn btn-primary" type="button">Найти и запустить</button>
+      <p class="hint">Открывает выдачу «Люди» по запросу и стартует сама. Несколько
+        ролей — через <code>OR</code>.</p>
+    </div>
+
+    <div class="actions">
+      <button id="start" class="btn btn-ghost" type="button">Старт на вкладке</button>
+      <button id="stop" class="btn btn-ghost" type="button">Стоп</button>
+    </div>
+
+    <form id="settings" class="form">
+      <fieldset class="group">
+        <legend>Лимиты</legend>
+        <label class="row">
+          <span>Приглашений в день</span>
+          <input id="dailyLimit" type="number" min="1" max="200" />
+        </label>
+        <label class="row">
+          <span>Приглашений в неделю</span>
+          <input id="weeklyLimit" type="number" min="1" max="500" />
+        </label>
+      </fieldset>
+
+      <fieldset class="group">
+        <legend>Ритм</legend>
+        <label class="row">
+          <span>Пауза между, сек</span>
+          <span class="range">
+            <input id="delayMinSec" type="number" min="2" max="600" />
+            <em>–</em>
+            <input id="delayMaxSec" type="number" min="2" max="600" />
+          </span>
+        </label>
+        <label class="row">
+          <span>Длинный перерыв каждые</span>
+          <input id="longPauseEvery" type="number" min="1" max="100" />
+        </label>
+        <label class="row">
+          <span>Длина перерыва, сек</span>
+          <input id="longPauseSec" type="number" min="10" max="1800" />
+        </label>
+      </fieldset>
+
+      <fieldset class="group">
+        <legend>Записка к приглашению</legend>
+        <label class="row">
+          <span>Режим</span>
+          <select id="noteMode">
+            <option value="plain">Без заметки</option>
+            <option value="note">С запиской</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Текст записки</span>
+          <textarea id="noteTemplate" rows="3"
+            placeholder="Здравствуйте, {{firstName}}! Тоже работаю с фронтендом — буду рад контакту."></textarea>
+        </label>
+        <p class="hint">
+          Подстановки: <code>{{firstName}}</code>, <code>{{name}}</code>, <code>{{headline}}</code>.
+          <span id="noteCount" class="count">0 / 200</span>
+        </p>
+        <p class="hint">У бесплатного аккаунта персонализированных приглашений в месяц
+          немного: когда лимит кончится, расширение само отправит без записки.</p>
+      </fieldset>
+
+      <fieldset class="group">
+        <legend>Фильтры по карточке</legend>
+        <label class="field">
+          <span>Ключевые слова — берём только их</span>
+          <textarea id="includeKeywords" rows="2" placeholder="frontend, продакт, recruiter"></textarea>
+        </label>
+        <label class="field">
+          <span>Стоп-слова — пропускаем</span>
+          <textarea id="excludeKeywords" rows="2" placeholder="crypto, mlm, hiring bot"></textarea>
+        </label>
+        <p class="hint">Через запятую. Пустое поле «ключевых слов» = подходят все.</p>
+      </fieldset>
+
+      <label class="check">
+        <input id="autoNextPage" type="checkbox" />
+        <span>Переходить на следующую страницу выдачи</span>
+      </label>
+    </form>
+
+    <footer class="foot">
+      <button id="reset" class="link" type="button">Сбросить счётчики</button>
+      <span class="foot-note">Настройки сохраняются сразу</span>
+    </footer>
+
+    <script src="../shared/settings.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>
